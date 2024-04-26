@@ -11,30 +11,31 @@ import { AuthorizationContext } from '../../context/AuthorizationContext'
 import { showMessage } from 'react-native-flash-message'
 import restaurantLogo from '../../../assets/restaurantLogo.jpeg'
 
-export default function RestaurantsScreen ({ navigation }) {
+export default function RestaurantsScreen ({ navigation, route }) {
   const [restaurants, setRestaurants] = useState([])
   const { loggedInUser } = useContext(AuthorizationContext)
 
   useEffect(() => {
-    async function fetchRestaurants () {
-      try {
-        const fetchedRestaurants = await getAll()
-        setRestaurants(fetchedRestaurants)
-      } catch (error) {
-        showMessage({
-          message: `There was an error while retrieving restaurants. ${error} `,
-          type: 'error',
-          style: GlobalStyles.flashStyle,
-          titleStyle: GlobalStyles.flashTextStyle
-        })
-      }
-    }
     if (loggedInUser) {
       fetchRestaurants()
     } else {
       setRestaurants(null)
     }
-  }, [loggedInUser])
+  }, [loggedInUser, route])
+
+  const fetchRestaurants = async () => {
+    try {
+      const fetchedRestaurants = await getAll()
+      setRestaurants(fetchedRestaurants)
+    } catch (error) {
+      showMessage({
+        message: `There was an error while retrieving restaurants. ${error} `,
+        type: 'error',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+    }
+  }
 
   const renderRestaurant = ({ item }) => {
     return (
